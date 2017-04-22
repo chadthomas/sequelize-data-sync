@@ -1,0 +1,39 @@
+{
+  "name": "sequelize-data-sync",
+  "version": "1.0.0",
+  "description": "Data syncronization library for sequelize",
+  "main": "index.js",
+  "author": {
+    "name": "Chad Thomas",
+    "email": "chad.thomas@solidalpha.com"
+  },
+  "keywords": [
+    "sequelize",
+    "data",
+	"sync",
+	"migration"
+  ],
+  "contributors": [
+    {
+      "name": "Chad Thomas",
+      "email": "chad.thomas@solidalpha.com"
+    }
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "homepage": "https://github.com/chadthomas/sequelize-data-sync",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chadthomas/sequelize-data-sync.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chadthomas/sequelize-data-sync/issues"
+  },
+  "dependencies": {
+    "array.prototype.find": "^2.0.4",
+    "extend": "^3.0.0",
+    "sequelize": "^3.30.4"
+  }
+}
