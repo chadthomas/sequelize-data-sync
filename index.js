@@ -14,25 +14,15 @@ var SequelizeDataSync = {
 
 	syncData: function(sourceModel, targetModel, options) {
 
-		/*
-			onNewRecord: false,
-			onUpdateRecord: false,
-			onDeleteRecord: false,
-			onNewRelatedData: false,
-			onUpdateRelatedData: false,
-			onDeleteRelatedData: false,
-			onNew< Singular Relation Name >: false,
-			onUpdate< Singular Relation Name >: false,
-			onDelete< Singular Relation Name >: false
-		*/
-
 		options = extend(
 			{
 				enableRelations: false,
 				exclude: [],
 				compareOnly: false,
 				pivotKey: 'id',
+				relationPivotKeys: {},
 				idKey: 'id',
+				relationIdKeys: {},
 				onNewRecord: false,
 				onUpdateRecord: false,
 				onDeleteRecord: false,
@@ -49,9 +39,8 @@ var SequelizeDataSync = {
 
 		var matchingRelationNames = options.enableRelations &&
 			QueryHelper.getMatchingRelationNames(sourceModel, targetModel)
-				.filter(function(relationName) {
-					console.log(relationName);
-					return options.exclude.indexOf(relationName) === -1;
+				.filter(function(pluralRelationName) {
+					return options.exclude.indexOf(pluralRelationName) === -1;
 				});
 
 		return CompareHelper.compareModels(
@@ -115,10 +104,13 @@ var SequelizeDataSync = {
 				var isNewRecord = targetRecord.$options.isNewRecord;
 
 				options.enableRelations && matchingRelationNames
-					.forEach(function(relationName) {
+					.forEach(function(pluralRelationName) {
 
-						var association = targetModel.associations[relationName];
+						var association = targetModel.associations[pluralRelationName];
 						var singularRelationName = association.options.name.singular;
+						
+						//var relationPivotKey = func
+						//var relationIdKey = 
 
 						QueryHelper.getRelationRecords(
 							sourceRecord,
@@ -223,7 +215,7 @@ var SequelizeDataSync = {
 									function(targetRelationRecord) {
 
 										!options.compareOnly &&
-											targetRecord['remove' + relationName](targetRelationRecord);
+											targetRecord['remove' + pluralRelationName](targetRelationRecord);
 
 										callRelationCallback(
 											options,
@@ -261,9 +253,9 @@ function callCallback(options, name, args) {
 	return false;
 }
 
-function callRelationCallback(options, name, relationName, args) {
+function callRelationCallback(options, name, singularRelationName, args) {
 
-	if(callCallback(options, name + relationName, args)) {
+	if(callCallback(options, name + singularRelationName, args)) {
 		return true;
 	} else if(callCallback(options, name + 'RelatedData', args)) {
 		return true;
