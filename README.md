@@ -7,50 +7,30 @@
 SequelizeDataSync.syncData(
 	sourceModel,
 	targetModel,
-	{
-		idKey: 'myIdProperty',
-		/*
-			default: id
-			(optional) Key used to identify records
-		*/
-		
+	{	
 		pivotKey: 'myPropertyName',
 		/*
-			(optional) Key used to pair records from source to target
+			default: 'id'
+			(optional) Default pivot key
 		*/
 
-		enableRelations: false, 
+		sourcePivotKey: 'myPropertyName',
+		targetPivotKey: 'myPropertyName',
 		/*
-			default: false
-			(optional)
-			Only goes one level deep.
-			Will establish association with BelongsTo / BelongsToMany relations,
-			will create new records (if needed) for hasOne / hasMany relations
+			(optional) Override pivotKey for a specific model
 		*/
-
-		exclude: ['PluralRelationName>'],
-		/*
-			default: []
-			(optional) 
-			Relations to exclude.
-			NOTE: THIS IS THE PLURAL NAME, NOT SINGULAR LIKE USED ELSEWHERE.
-		*/
-
-		relationIdKeys: {
-			'PluralRelationName': 'otherIdProperty'
+		
+		include: {
+			'PluralRelationName': {
+				pivotKey: 'otherProperty',
+				sourcePivotKey: 'otherProperty',
+				targetPivotKey: 'otherProperty'
+			},
+			'PluralRelationName': 'otherProperty',
+			....
 		},
 		/*
-			default: []
-			(optional)
-			Key used to identify relation records, if this is not provided for a relation we use < idKey >
-			NOTE: THIS IS THE PLURAL NAME, NOT SINGULAR LIKE USED ELSEWHERE.
-		*/
-
-		relationPivotKeys: {
-			'PluralRelationName': 'otherProperty'
-		},
-		/*
-			default: []
+			default: {}
 			(optional)
 			Key used to pair relation records from source to target, if this is not provided for a relation we use < pivotKey >
 			NOTE: THIS IS THE PLURAL NAME, NOT SINGULAR LIKE USED ELSEWHERE.

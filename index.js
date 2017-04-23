@@ -16,13 +16,11 @@ var SequelizeDataSync = {
 
 		options = extend(
 			{
-				enableRelations: false,
-				exclude: [],
 				compareOnly: false,
 				pivotKey: 'id',
-				relationPivotKeys: {},
-				idKey: 'id',
-				relationIdKeys: {},
+				sourcePivotKey: false,
+				targetPivotKey: false,
+				include: {},
 				onNewRecord: false,
 				onUpdateRecord: false,
 				onDeleteRecord: false,
@@ -33,23 +31,25 @@ var SequelizeDataSync = {
 			options || {}
 		);
 
-		if(!Array.isArray(options.exclude)) {
-			options.exclude = [];
+		if(typeof options.include !== 'object') {
+			options.include = {};
 		}
 
+		/*
 		var matchingRelationNames = options.enableRelations &&
-			QueryHelper.getMatchingRelationNames(sourceModel, targetModel)
+		QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
+		
 				.filter(function(pluralRelationName) {
 					return options.exclude.indexOf(pluralRelationName) === -1;
 				});
+		*/
 
 		return CompareHelper.compareModels(
 			sourceModel,
 			targetModel,
 			options.pivotKey,
-			options.idKey,
 			function(sourceRecord) {
-				var recordData = QueryHelper.getRecordData(sourceRecord, options.pivotKey, options.idKey);
+				var recordData = QueryHelper.getRecordData(targetModel, sourceRecord, options.pivotKey);
 
 				if(options.compareOnly) {
 					return targetModel.build(recordData);
@@ -103,26 +103,26 @@ var SequelizeDataSync = {
 			function(sourceRecord, targetRecord) {
 				var isNewRecord = targetRecord.$options.isNewRecord;
 
-				options.enableRelations && matchingRelationNames
+/*
+				matchingRelationNames
 					.forEach(function(pluralRelationName) {
 
 						var association = targetModel.associations[pluralRelationName];
 						var singularRelationName = association.options.name.singular;
 						
 						//var relationPivotKey = func
-						//var relationIdKey = 
 
 						QueryHelper.getRelationRecords(
+							association
 							sourceRecord,
 							targetRecord,
-							association,
 							function(sourceRelationRecords, targetRelationRecords) {
 
 								CompareHelper.compareRelationRecords(
+									association.target
 									sourceRelationRecords,
 									targetRelationRecords,
 									options.pivotKey,
-									options.idKey,
 									function(sourceRelationRecord) {
 										if(association.associationType === 'BelongsToMany' ||
 											association.associationType === 'BelongsTo') {
@@ -156,7 +156,7 @@ var SequelizeDataSync = {
 											return;
 										}
 
-										var recordData = QueryHelper.getRecordData(sourceRelationRecord, options.pivotKey, options.idKey);
+										var recordData = QueryHelper.getRecordData(association.target, sourceRelationRecord, options.pivotKey);
 
 										function _build(recordData) {
 											if(options.compareOnly) {
@@ -233,6 +233,7 @@ var SequelizeDataSync = {
 						);
 
 					});
+				*/
 			}
 		);
 	},
