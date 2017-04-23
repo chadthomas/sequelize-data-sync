@@ -5,8 +5,8 @@
 ## use
 ```javascript
 SequelizeDataSync.syncData(
-	< sourceModel >,
-	< targetModel >,
+	sourceModel,
+	targetModel,
 	{
 		pivotKey: 'id',
 		/*
