@@ -27,6 +27,7 @@ SequelizeDataSync.syncData(
 				targetPivotKey: 'otherProperty'
 			},
 			'PluralRelationName': 'otherProperty',
+			'PluralRelationName': true,
 			....
 		},
 		/*

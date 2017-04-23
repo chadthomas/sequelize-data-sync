@@ -201,11 +201,6 @@ var SequelizeDataSync = {
 											});
 									},
 									function(targetRelationRecord, changedKeys) {
-										if(association.type === 'BelongsToMany' ||
-											association.type === 'BelongsTo') {
-											return;
-										}
-
 										!options.compareOnly && targetRelationRecord.save();
 
 										changedKeys.forEach(function(key) {
