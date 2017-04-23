@@ -1,6 +1,6 @@
 {
   "name": "sequelize-data-sync",
-  "version": "1.0.1c",
+  "version": "1.0.2",
   "description": "Data syncronization for sequelize",
   "main": "index.js",
   "author": {
