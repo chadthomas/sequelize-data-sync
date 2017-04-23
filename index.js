@@ -267,7 +267,7 @@ function callRelationCallback(options, name, singularRelationName, args) {
 
 	if(callCallback(options, name + singularRelationName, args)) {
 		return true;
-	} else if(callCallback(options, name + 'RelatedData', args)) {
+	} else if(callCallback(options, name + 'Related', args)) {
 		return true;
 	}
 }

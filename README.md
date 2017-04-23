@@ -57,13 +57,13 @@ SequelizeDataSync.syncData(
 		onDeleteRecord: function(record) {},
 
 		onNew< singular relation name >: function(relationRecord, record, singularRelationName) {},
-		onNewRelatedData: function(relationRecord, record, singularRelationName) {},
+		onNewRelated: function(relationRecord, record, singularRelationName) {},
 
 		onUpdate< singular relation name >: function(relationRecord, key, oldValue, newValue, record, isNewRecord, singularRelationName) {},
-		onUpdateRelatedData: function(relationRecord, key, oldValue, newValue, record, isNewRecord, singularRelationName) {},
+		onUpdateRelated: function(relationRecord, key, oldValue, newValue, record, isNewRecord, singularRelationName) {},
 
 		onDelete< singular relation name >: function(relationRecord, record, singularRelationName) {},
-		onDeleteRelatedData: function(relationRecord, record, singularRelationName) {}
+		onDeleteRelated: function(relationRecord, record, singularRelationName) {}
 	}
 );
 ```
