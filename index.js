@@ -46,6 +46,7 @@ var SequelizeDataSync = {
 			sourceModel,
 			targetModel,
 			options.pivotKey,
+			options.pivotKey,
 			function(sourceRecord) {
 				var recordData = QueryHelper.getRecordData(targetModel, sourceRecord, options.pivotKey);
 
@@ -119,6 +120,7 @@ var SequelizeDataSync = {
 									association.target,
 									sourceRelationRecords,
 									targetRelationRecords,
+									options.pivotKey,
 									options.pivotKey,
 									function(sourceRelationRecord) {
 										if(association.associationType === 'BelongsToMany' ||
