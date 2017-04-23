@@ -35,10 +35,8 @@ var SequelizeDataSync = {
 			options.include = {};
 		}
 
+		var matchingRelationNames = QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
 		/*
-		var matchingRelationNames = options.enableRelations &&
-		QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
-		
 				.filter(function(pluralRelationName) {
 					return options.exclude.indexOf(pluralRelationName) === -1;
 				});
@@ -103,7 +101,6 @@ var SequelizeDataSync = {
 			function(sourceRecord, targetRecord) {
 				var isNewRecord = targetRecord.$options.isNewRecord;
 
-/*
 				matchingRelationNames
 					.forEach(function(pluralRelationName) {
 
@@ -113,13 +110,13 @@ var SequelizeDataSync = {
 						//var relationPivotKey = func
 
 						QueryHelper.getRelationRecords(
-							association
+							association,
 							sourceRecord,
 							targetRecord,
 							function(sourceRelationRecords, targetRelationRecords) {
 
 								CompareHelper.compareRelationRecords(
-									association.target
+									association.target,
 									sourceRelationRecords,
 									targetRelationRecords,
 									options.pivotKey,
@@ -233,7 +230,6 @@ var SequelizeDataSync = {
 						);
 
 					});
-				*/
 			}
 		);
 	},
