@@ -10,8 +10,8 @@
   "keywords": [
     "sequelize",
     "data",
-	"sync",
-	"migration"
+    "sync",
+    "migration"
   ],
   "contributors": [
     {
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "array.prototype.find": "^2.0.4",
+    "bluebird": "^3.5.0",
     "extend": "^3.0.0",
     "sequelize": "^3.30.4"
   }

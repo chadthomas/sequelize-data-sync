@@ -1,17 +1,14 @@
 'use strict'
 
-var queryHelper = require('./lib/query');
-var compareHelper = require('./lib/compare');
+var Promise = require('bluebird');
+var QueryHelper = require('./lib/query');
+var CompareHelper = require('./lib/compare');
 var extend = require('extend');
-
-//compareOnly
 
 var SequelizeDataSync = {
 
 	compareData: function(sourceModel, targetModel, options) {
-
 		options.compareOnly = true;
-		
 		this.syncData(sourceModel, targetModel, options);
 	},
 
@@ -46,15 +43,15 @@ var SequelizeDataSync = {
 		);
 
 		var matchingRelationNames = options.includeRelations &&
-			queryHelper._getMatchingRelationNames(sourceModel, targetModel);
+			QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
 
-		return compareHelper._compareModels(
+		return CompareHelper.compareModels(
 			sourceModel,
 			targetModel,
 			options.pivotKey,
 			options.idKey,
 			function(sourceRecord) {
-				var recordData = queryHelper._getRecordData(sourceRecord, options.pivotKey, options.idKey);
+				var recordData = QueryHelper.getRecordData(sourceRecord, options.pivotKey, options.idKey);
 
 				if(options.compareOnly) {
 					return targetModel.build(recordData);
@@ -75,9 +72,7 @@ var SequelizeDataSync = {
 					});
 			},
 			function(targetRecord, changedKeys, isNewRecord) {
-				if(!options.compareOnly) {
-					targetRecord.save();
-				}
+				!options.compareOnly && targetRecord.save();
 
 				changedKeys.forEach(function(key) {
 					var oldValue = targetRecord.previous(key);
@@ -97,9 +92,7 @@ var SequelizeDataSync = {
 				});
 			},
 			function(targetRecord) {
-				if(!options.compareOnly) {
-					targetRecord.destroy();
-				}
+				!options.compareOnly && targetRecord.destroy();
 
 				callCallback(
 					options,
@@ -114,25 +107,27 @@ var SequelizeDataSync = {
 
 				options.includeRelations && matchingRelationNames
 					.forEach(function(relationName) {
+
 						var association = targetModel.associations[relationName];
 						var singularRelationName = association.options.name.singular;
 
-						queryHelper._getRelationRecords(
+						QueryHelper.getRelationRecords(
 							sourceRecord,
 							targetRecord,
 							association,
 							function(sourceRelationRecords, targetRelationRecords) {
 
-								compareHelper._compareRelationRecords(
+								CompareHelper.compareRelationRecords(
 									sourceRelationRecords,
 									targetRelationRecords,
 									options.pivotKey,
 									options.idKey,
 									function(sourceRelationRecord) {
+										if(association.associationType === 'BelongsToMany' ||
+											association.associationType === 'BelongsTo') {
 
-										if(association.associationType === 'BelongsToMany') {
-
-											queryHelper._findRecordBy(
+											QueryHelper
+												.findRecordBy(
 													association.target,
 													options.pivotKey,
 													sourceRelationRecord[options.pivotKey]
@@ -142,9 +137,8 @@ var SequelizeDataSync = {
 														return;
 													}
 
-													return targetRecord[association.accessors.add](targetRelationRecord)
-												})
-												.then(function(targetRelationRecord) {
+													!options.compareOnly && 
+														targetRecord[association.accessors.add](targetRelationRecord);
 
 													callRelationCallback(
 														options,
@@ -161,9 +155,20 @@ var SequelizeDataSync = {
 											return;
 										}
 
-										var recordData = queryHelper._getRecordData(sourceRelationRecord, options.pivotKey, options.idKey);
+										var recordData = QueryHelper.getRecordData(sourceRelationRecord, options.pivotKey, options.idKey);
 
-										return targetRecord[association.accessors.create](recordData)
+										function _build(recordData) {
+											if(options.compareOnly) {
+												return Promise.bind(this).then(function() {
+													recordData[targetModel.options.name.singular] = targetRecord;
+													return association.target.build(recordData);
+												});
+											}
+
+											return targetRecord[association.accessors.create](recordData);
+										}
+
+										return _build(recordData)
 											.then(function(targetRelationRecord) {
 
 												callRelationCallback(
@@ -179,7 +184,12 @@ var SequelizeDataSync = {
 											});
 									},
 									function(targetRelationRecord, changedKeys) {
-										record.save();
+										if(association.associationType === 'BelongsToMany' ||
+											association.associationType === 'BelongsTo') {
+											return;
+										}
+
+										!options.compareOnly && targetRelationRecord.save();
 
 										changedKeys.forEach(function(key) {
 											var oldValue = targetRelationRecord.previous(key);
@@ -202,7 +212,9 @@ var SequelizeDataSync = {
 										});
 									},
 									function(targetRelationRecord) {
-										targetRecord['remove' + relationName](targetRelationRecord);
+
+										!options.compareOnly &&
+											targetRecord['remove' + relationName](targetRelationRecord);
 
 										callRelationCallback(
 											options,
@@ -225,7 +237,7 @@ var SequelizeDataSync = {
 	},
 
 	forEachRecord: function(model, perRecordCallback) {
-		return queryHelper._forEachRecord(model, perRecordCallback);
+		return QueryHelper.forEachRecord(model, perRecordCallback);
 	}
 };
 
