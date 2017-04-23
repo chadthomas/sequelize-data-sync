@@ -35,20 +35,27 @@ var SequelizeDataSync = {
 			options.include = {};
 		}
 
+		if(!options.sourcePivotKey) {
+			options.sourcePivotKey = options.pivotKey;
+		}
+
+		if(!options.targetPivotKey) {
+			options.targetPivotKey = options.pivotKey;
+		}
+
 		var matchingRelationNames = QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
-		/*
-				.filter(function(pluralRelationName) {
-					return options.exclude.indexOf(pluralRelationName) === -1;
-				});
-		*/
 
 		return CompareHelper.compareModels(
 			sourceModel,
 			targetModel,
-			options.pivotKey,
-			options.pivotKey,
+			options.sourcePivotKey,
+			options.targetPivotKey,
 			function(sourceRecord) {
-				var recordData = QueryHelper.getRecordData(targetModel, sourceRecord, options.pivotKey);
+				var recordData = QueryHelper.getRecordData(
+					targetModel,
+					options.targetPivotKey,
+					sourceRecord
+				);
 
 				if(options.compareOnly) {
 					return targetModel.build(recordData);
@@ -120,8 +127,8 @@ var SequelizeDataSync = {
 									association.target,
 									sourceRelationRecords,
 									targetRelationRecords,
-									options.pivotKey,
-									options.pivotKey,
+									options.sourcePivotKey,
+									options.targetPivotKey,
 									function(sourceRelationRecord) {
 										if(association.associationType === 'BelongsToMany' ||
 											association.associationType === 'BelongsTo') {
@@ -129,8 +136,8 @@ var SequelizeDataSync = {
 											QueryHelper
 												.findRecordBy(
 													association.target,
-													options.pivotKey,
-													sourceRelationRecord[options.pivotKey]
+													options.targetPivotKey,
+													sourceRelationRecord[options.sourcePivotKey]
 												)
 												.then(function(targetRelationRecord) {
 													if(!targetRelationRecord) {
@@ -155,7 +162,11 @@ var SequelizeDataSync = {
 											return;
 										}
 
-										var recordData = QueryHelper.getRecordData(association.target, sourceRelationRecord, options.pivotKey);
+										var recordData = QueryHelper.getRecordData(
+											association.target,
+											options.targetPivotKey,
+											sourceRelationRecord
+										);
 
 										function _build(recordData) {
 											if(options.compareOnly) {
