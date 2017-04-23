@@ -21,20 +21,19 @@ SequelizeDataSync.syncData(
 		*/
 		
 		include: {
-			'PluralRelationName': {
+			'singularRelationName': {
 				pivotKey: 'otherProperty',
 				sourcePivotKey: 'otherProperty',
 				targetPivotKey: 'otherProperty'
 			},
-			'PluralRelationName': 'otherProperty',
-			'PluralRelationName': true,
+			'singularRelationName': 'otherProperty',
+			'singularRelationName': true,
 			....
 		},
 		/*
 			default: {}
 			(optional)
 			Key used to pair relation records from source to target, if this is not provided for a relation we use < pivotKey >
-			NOTE: THIS IS THE PLURAL NAME, NOT SINGULAR LIKE USED ELSEWHERE.
 		*/
 
 		compareOnly: false,

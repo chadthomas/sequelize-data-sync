@@ -1,6 +1,6 @@
 {
   "name": "sequelize-data-sync",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Data syncronization for sequelize",
   "main": "index.js",
   "author": {
@@ -34,9 +34,10 @@
   "dependencies": {
     "array.prototype.find": "^2.0.4",
     "bluebird": "^3.5.0",
-    "extend": "^3.0.0"
+    "extend": "^3.0.0",
+    "object.values": "^1.0.4"
   },
   "peerDependencies": {
-  	"sequelize": "^3.30.4"
+    "sequelize": "^3.30.4"
   }
 }

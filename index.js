@@ -107,7 +107,6 @@ var SequelizeDataSync = {
 				); 
 			},
 			function(sourceRecord, targetRecord) {
-
 				var isNewRecord = targetRecord.$options.isNewRecord;
 
 				associations
@@ -226,7 +225,7 @@ var SequelizeDataSync = {
 									function(targetRelationRecord) {
 
 										!options.compareOnly &&
-											targetRecord['remove' + association.name.plural](targetRelationRecord);
+											targetRecord[association.accessors.remove](targetRelationRecord);
 
 										callRelationCallback(
 											options,
