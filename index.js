@@ -124,8 +124,7 @@ var SequelizeDataSync = {
 									targetRelationRecords,
 									function(sourceRelationRecord) {
 
-										if(association.type === 'BelongsToMany' ||
-											association.type === 'BelongsTo') {
+										if(association.type === 'BelongsToMany' || association.type === 'BelongsTo') {
 
 											QueryHelper
 												.findRecordBy(
@@ -208,7 +207,7 @@ var SequelizeDataSync = {
 
 											callRelationCallback(
 												options,
-												'onUpdated',
+												'onUpdate',
 												association.name.singular,
 												[
 													targetRelationRecord,
@@ -223,9 +222,14 @@ var SequelizeDataSync = {
 										});
 									},
 									function(targetRelationRecord) {
-
-										!options.compareOnly &&
-											targetRecord[association.accessors.remove](targetRelationRecord);
+										
+										if(!options.compareOnly) {
+											if(association.type === 'BelongsToMany' || association.type === 'BelongsTo') {
+												targetRecord[association.accessors.remove](targetRelationRecord);
+											} else {
+												targetRelationRecord.destroy();
+											}
+										}
 
 										callRelationCallback(
 											options,

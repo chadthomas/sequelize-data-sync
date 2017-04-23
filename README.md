@@ -33,7 +33,10 @@ SequelizeDataSync.syncData(
 		/*
 			default: {}
 			(optional)
-			Key used to pair relation records from source to target, if this is not provided for a relation we use < pivotKey >
+			Only goes one level deep.
+			Will establish association with BelongsTo / BelongsToMany relationsßß
+			will create new records (if needed) for hasOne / hasMany relations
+			
 		*/
 
 		compareOnly: false,
@@ -60,6 +63,9 @@ SequelizeDataSync.syncData(
 
 		onUpdate< singular relation name >: function(relationRecord, key, oldValue, newValue, record, isNewRecord, singularRelationName) {},
 		onUpdateRelated: function(relationRecord, key, oldValue, newValue, record, isNewRecord, singularRelationName) {},
+		/*
+			Only gets called for a hasOne or hasMany relation
+		*/
 
 		onDelete< singular relation name >: function(relationRecord, record, singularRelationName) {},
 		onDeleteRelated: function(relationRecord, record, singularRelationName) {}
