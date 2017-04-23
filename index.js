@@ -114,8 +114,9 @@ var SequelizeDataSync = {
 
 						var association = targetModel.associations[pluralRelationName];
 						var singularRelationName = association.options.name.singular;
-						
-						//var relationPivotKey = func
+
+						var sourceRelationPivotKey = options.sourcePivotKey;
+						var targetRelationPivotKey = options.targetPivotKey;
 
 						QueryHelper.getRelationRecords(
 							association,
@@ -127,8 +128,8 @@ var SequelizeDataSync = {
 									association.target,
 									sourceRelationRecords,
 									targetRelationRecords,
-									options.sourcePivotKey,
-									options.targetPivotKey,
+									sourceRelationPivotKey,
+									targetRelationPivotKey,
 									function(sourceRelationRecord) {
 										if(association.associationType === 'BelongsToMany' ||
 											association.associationType === 'BelongsTo') {
@@ -136,8 +137,8 @@ var SequelizeDataSync = {
 											QueryHelper
 												.findRecordBy(
 													association.target,
-													options.targetPivotKey,
-													sourceRelationRecord[options.sourcePivotKey]
+													targetRelationPivotKey,
+													sourceRelationRecord[sourceRelationPivotKey]
 												)
 												.then(function(targetRelationRecord) {
 													if(!targetRelationRecord) {
@@ -164,7 +165,7 @@ var SequelizeDataSync = {
 
 										var recordData = QueryHelper.getRecordData(
 											association.target,
-											options.targetPivotKey,
+											targetRelationPivotKey,
 											sourceRelationRecord
 										);
 
