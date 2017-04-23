@@ -28,7 +28,8 @@ var SequelizeDataSync = {
 
 		options = extend(
 			{
-				includeRelations: false,
+				enableRelations: false,
+				exclude: [],
 				compareOnly: false,
 				pivotKey: 'id',
 				idKey: 'id',
@@ -42,8 +43,16 @@ var SequelizeDataSync = {
 			options || {}
 		);
 
-		var matchingRelationNames = options.includeRelations &&
-			QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
+		if(!Array.isArray(options.exclude)) {
+			options.exclude = [];
+		}
+
+		var matchingRelationNames = options.enableRelations &&
+			QueryHelper.getMatchingRelationNames(sourceModel, targetModel)
+				.filter(function(relationName) {
+					console.log(relationName);
+					return options.exclude.indexOf(relationName) === -1;
+				});
 
 		return CompareHelper.compareModels(
 			sourceModel,
@@ -105,7 +114,7 @@ var SequelizeDataSync = {
 			function(sourceRecord, targetRecord) {
 				var isNewRecord = targetRecord.$options.isNewRecord;
 
-				options.includeRelations && matchingRelationNames
+				options.enableRelations && matchingRelationNames
 					.forEach(function(relationName) {
 
 						var association = targetModel.associations[relationName];
