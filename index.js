@@ -43,7 +43,7 @@ var SequelizeDataSync = {
 			options.targetPivotKey = options.pivotKey;
 		}
 
-		var matchingRelationNames = QueryHelper.getMatchingRelationNames(sourceModel, targetModel);
+		var associations = QueryHelper.getAssociations(sourceModel, targetModel, options);
 
 		return CompareHelper.compareModels(
 			sourceModel,
@@ -107,16 +107,11 @@ var SequelizeDataSync = {
 				); 
 			},
 			function(sourceRecord, targetRecord) {
+
 				var isNewRecord = targetRecord.$options.isNewRecord;
 
-				matchingRelationNames
-					.forEach(function(pluralRelationName) {
-
-						var association = targetModel.associations[pluralRelationName];
-						var singularRelationName = association.options.name.singular;
-
-						var sourceRelationPivotKey = options.sourcePivotKey;
-						var targetRelationPivotKey = options.targetPivotKey;
+				associations
+					.forEach(function(association) {
 
 						QueryHelper.getRelationRecords(
 							association,
@@ -124,21 +119,19 @@ var SequelizeDataSync = {
 							targetRecord,
 							function(sourceRelationRecords, targetRelationRecords) {
 
-								CompareHelper.compareRelationRecords(
-									association.target,
+								CompareHelper.compareAssociationRecords(
+									association,
 									sourceRelationRecords,
 									targetRelationRecords,
-									sourceRelationPivotKey,
-									targetRelationPivotKey,
 									function(sourceRelationRecord) {
-										if(association.associationType === 'BelongsToMany' ||
-											association.associationType === 'BelongsTo') {
+										if(association.type === 'BelongsToMany' ||
+											association.type === 'BelongsTo') {
 
 											QueryHelper
 												.findRecordBy(
-													association.target,
-													targetRelationPivotKey,
-													sourceRelationRecord[sourceRelationPivotKey]
+													association.targetModel,
+													association.targetPivotKey,
+													sourceRelationRecord[association.sourcePivotKey]
 												)
 												.then(function(targetRelationRecord) {
 													if(!targetRelationRecord) {
@@ -151,11 +144,11 @@ var SequelizeDataSync = {
 													callRelationCallback(
 														options,
 														'onNew',
-														singularRelationName,
+														association.singularName,
 														[
 															targetRelationRecord,
 															targetRecord,
-															singularRelationName
+															association.singularName
 														]
 													);
 												});
@@ -164,8 +157,8 @@ var SequelizeDataSync = {
 										}
 
 										var recordData = QueryHelper.getRecordData(
-											association.target,
-											targetRelationPivotKey,
+											association.targetModel,
+											association.targetPivotKey,
 											sourceRelationRecord
 										);
 
@@ -186,18 +179,18 @@ var SequelizeDataSync = {
 												callRelationCallback(
 													options,
 													'onNew',
-													singularRelationName,
+													association.singularName,
 													[
 														targetRelationRecord,
 														targetRecord,
-														singularRelationName
+														association.singularName
 													]
 												);
 											});
 									},
 									function(targetRelationRecord, changedKeys) {
-										if(association.associationType === 'BelongsToMany' ||
-											association.associationType === 'BelongsTo') {
+										if(association.type === 'BelongsToMany' ||
+											association.type === 'BelongsTo') {
 											return;
 										}
 
@@ -210,7 +203,7 @@ var SequelizeDataSync = {
 											callRelationCallback(
 												options,
 												'onUpdated',
-												singularRelationName,
+												association.singularName,
 												[
 													targetRelationRecord,
 													key,
@@ -218,7 +211,7 @@ var SequelizeDataSync = {
 													newValue,
 													targetRecord,
 													isNewRecord,
-													singularRelationName
+													association.singularName
 												]
 											);
 										});
@@ -226,23 +219,22 @@ var SequelizeDataSync = {
 									function(targetRelationRecord) {
 
 										!options.compareOnly &&
-											targetRecord['remove' + pluralRelationName](targetRelationRecord);
+											targetRecord['remove' + association.pluralName](targetRelationRecord);
 
 										callRelationCallback(
 											options,
 											'onDelete',
-											singularRelationName,
+											association.singularName,
 											[
 												targetRelationRecord,
 												targetRecord,
-												singularRelationName
+												association.singularName
 											]
 										);
 									}
 								);
 							}
 						);
-
 					});
 			}
 		);
