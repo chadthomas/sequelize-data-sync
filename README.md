@@ -72,6 +72,10 @@ SequelizeDataSync.syncData(
 	}
 );
 ```
+
+Roadmap:
+Testing will be implemented soon, along with updated, more clear documentation
+
 ## License
 MIT
   

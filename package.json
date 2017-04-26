@@ -1,6 +1,6 @@
 {
   "name": "sequelize-data-sync",
-  "version": "1.0.7a",
+  "version": "1.0.7b",
   "description": "Data Migration / Comparison Library for Sequelize",
   "main": "index.js",
   "author": {
