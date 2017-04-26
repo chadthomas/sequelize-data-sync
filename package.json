@@ -1,17 +1,38 @@
 {
   "name": "sequelize-data-sync",
-  "version": "1.0.7",
-  "description": "Data syncronization for sequelize",
+  "version": "1.0.7a",
+  "description": "Data Migration / Comparison Library for Sequelize",
   "main": "index.js",
   "author": {
     "name": "Chad Thomas",
     "email": "chad.thomas@solidalpha.com"
   },
   "keywords": [
-    "sequelize",
-    "data",
-    "sync",
-    "migration"
+	"sequelize",
+	"data",
+	"sync",
+	"migration",
+	"compare",
+	"comparison",
+	"migrate",
+	"migration",
+	"migrations",
+	"migrate data",
+	"data migrate",
+	"migrate database",
+	"database migrate",
+	"database migration",
+	"database migrations",
+	"data migration",
+	"data migrations",
+	"migrate mysql",
+	"mysql migration",
+	"mysql migrate",
+	"mysql",
+	"datasource",
+	"database",
+	"compare",
+	"comparison"
   ],
   "contributors": [
     {
